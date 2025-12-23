@@ -1,28 +1,18 @@
 ---
-- name: Install MongoDB dependencies
-  apt:
-    name:
-      - mongodb
-      - mongodb-clients
+- name: Install MongoDB
+  ansible.builtin.apt:
+    name: mongodb
     state: present
     update_cache: yes
 
-- name: Ensure MongoDB data directory exists
-  file:
-    path: "{{ mongo_data_dir }}"
-    state: directory
-    owner: ansibleadmin
-    group: ansibleadmin
-    mode: "0755"
-
-- name: Configure MongoDB to listen on all interfaces
-  lineinfile:
+- name: Configure MongoDB
+  ansible.builtin.lineinfile:
     path: /etc/mongodb.conf
     regexp: '^bind_ip'
     line: 'bind_ip = 0.0.0.0'
 
-- name: Start and enable MongoDB service
-  service:
+- name: Start service
+  ansible.builtin.service:
     name: mongodb
     state: started
     enabled: yes

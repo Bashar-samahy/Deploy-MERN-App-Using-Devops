@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for SonarQube
+  sonarqube-postgres:
+    image: postgres:15-alpine
+    container_name: sonarqube-postgres
+    environment:
+      POSTGRES_USER: sonaruser
+      POSTGRES_PASSWORD: sonarpass
+      POSTGRES_DB: sonarqube
+    volumes:
+      - sonarqube_postgres_data:/var/lib/postgresql/data
+      - ./config/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+    ports:
+      - "5432:5432"
+    networks:
+      - sonarqube-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonaruser"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # SonarQube Server
+  sonarqube:
+    image: sonarqube:10.4-community
+    container_name: sonarqube
+    depends_on:
+      sonarqube-postgres:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_USERNAME: sonaruser
+      SONAR_JDBC_PASSWORD: sonarpass
+      SONAR_JDBC_URL: jdbc:postgresql://sonarqube-postgres:5432/sonarqube
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: true
+      SONAR_WEB_JVMOPTIONS: "-Xmx512m -Xms512m"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+      - ./sonar/sonar-project.properties:/opt/sonarqube/conf/sonar-project.properties
+    ports:
+      - "9000:9000"
+    networks:
+      - sonarqube-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/api/system/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # SonarQube Scanner (for CI/CD integration)
+  sonar-scanner:
+    image: sonarsource/sonar-scanner-cli:latest
+    container_name: sonar-scanner
+    environment:
+      SONAR_HOST_URL: http://sonarqube:9000
+      SONAR_TOKEN: ${SONAR_TOKEN:-}
+    volumes:
+      - .:/usr/src
+      - sonar-scanner-cache:/tmp/.sonar
+    networks:
+      - sonarqube-network
+    profiles:
+      - scanner
+
+volumes:
+  sonarqube_postgres_data:
+    driver: local
+  sonarqube_data:
+    driver: local
+  sonarqube_extensions:
+    driver: local
+  sonarqube_logs:
+    driver: local
+  sonar-scanner-cache:
+    driver: local
+
+networks:
+  sonarqube-network:
+    driver: bridge
+    name: sonarqube-network

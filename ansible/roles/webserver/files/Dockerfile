@@ -1,22 +1,28 @@
-# Base image for backend
-FROM node:14
+# Stage 1 - Build React frontend
+FROM node:18 as build_frontend
 
-WORKDIR /usr/src/app
+WORKDIR /app/client
 
-# Copy backend files
-COPY package*.json ./
+COPY app/client/package*.json ./
 RUN npm install
 
-COPY server.js ./
+COPY app/client ./
+RUN npm run build
 
-# Build client app
-COPY client ./client
-WORKDIR /usr/src/app/client
-RUN npm install && npm run build
+# Stage 2 - Build backend
+FROM node:18
 
-# Move back to root and expose port
-WORKDIR /usr/src/app
+WORKDIR /app
+
+COPY app/package*.json ./
+RUN npm install
+
+# Copy backend code
+COPY app/server.js ./
+
+# Copy React build
+COPY --from=build_frontend /app/client/build ./client/build
+
 EXPOSE 5000
 
-# Start server
 CMD ["node", "server.js"]

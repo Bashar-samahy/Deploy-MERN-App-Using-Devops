@@ -1,4 +1,5 @@
 ---
 app_dir: "/home/ansibleadmin/app"
-docker_image_name: "mern_webserver_image"
-docker_container_name: "mern_webserver_container"
+docker_image: "mern_webserver"
+docker_tag: "latest"
+container_port: 5000

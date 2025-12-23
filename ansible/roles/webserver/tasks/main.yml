@@ -1,43 +1,36 @@
 ---
 - name: Install Docker and Git
-  apt:
+  ansible.builtin.apt:
     name:
       - docker.io
       - git
     state: present
     update_cache: yes
 
-- name: Add ansibleadmin to docker group
-  user:
+- name: Add user to docker
+  ansible.builtin.user:
     name: ansibleadmin
     groups: docker
     append: yes
 
-- name: Create app directory
-  file:
-    path: "{{ app_dir }}"
-    state: directory
-    owner: ansibleadmin
-    group: ansibleadmin
-
-- name: Copy MERN app code to server
-  copy:
+- name: Copy app code
+  ansible.builtin.copy:
     src: files/app/
-    dest: "{{ app_dir }}/"
-    owner: ansibleadmin
-    group: ansibleadmin
-    mode: 0755
+    dest: "{{ app_dir }}"
+    mode: "0755"
 
 - name: Build Docker image
-  docker_image:
-    path: "{{ app_dir }}"
-    name: "{{ docker_image_name }}"
+  community.docker.docker_image:
+    build:
+      path: "{{ app_dir }}"
+    name: "{{ docker_image }}"
+    tag: "{{ docker_tag }}"
 
-- name: Run Docker container
-  docker_container:
-    name: "{{ docker_container_name }}"
-    image: "{{ docker_image_name }}"
+- name: Run container
+  community.docker.docker_container:
+    name: webapp
+    image: "{{ docker_image }}:{{ docker_tag }}"
     state: started
     restart_policy: always
-    ports:
-      - "80:5000"
+    published_ports:
+      - "80:{{ container_port }}"

@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - projects/mern-app-devops/ansible/roles/k8s

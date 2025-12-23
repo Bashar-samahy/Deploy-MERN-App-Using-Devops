@@ -1,0 +1,38 @@
+[Unit]
+Description=SonarQube with PostgreSQL Docker Compose Service
+Requires=docker.service
+After=docker.service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/bashar/projects/mern-app-devops
+ExecStart=/usr/local/bin/docker-compose -f docker-compose.sonar.yml up -d
+ExecStop=/usr/local/bin/docker-compose -f docker-compose.sonar.yml down
+ExecReload=/usr/local/bin/docker-compose -f docker-compose.sonar.yml restart
+TimeoutStartSec=0
+User=root
+Group=root
+Type=notify
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sonarqube
+
+# Restart policy
+Restart=on-failure
+RestartSec=10s
+
+# Environment variables
+Environment=SONAR_TOKEN=
+EnvironmentFile=-/home/bashar/projects/mern-app-devops/.env
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/home/bashar/projects/mern-app-devops/data /home/bashar/projects/mern-app-devops/logs /var/run/docker.sock
+
+[Install]
+WantedBy=multi-user.target

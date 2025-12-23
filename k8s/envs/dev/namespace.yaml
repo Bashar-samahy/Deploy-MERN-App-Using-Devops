@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mern-app-dev
+  labels:
+    name: mern-app-dev
+    environment: development
+    project: mern-app
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mern-app-config
+  namespace: mern-app-dev
+data:
+  NODE_ENV: "development"
+  LOG_LEVEL: "debug"
+  API_BASE_URL: "http://localhost:5000"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mern-app-secrets
+  namespace: mern-app-dev
+type: Opaque
+data:
+  MONGO_URI: bW9uZ29kYjovL21vbmdvLXNlcnZpY2U6MjcwMTcvbWVybmFwcA==  # base64 encoded
+  JWT_SECRET: c2VjdXJlLWp3dC1zZWNyZXQ=  # base64 encoded
