@@ -423,7 +423,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Documentation**: [Wiki](https://github.com/your-org/mern-app-devops/wiki)
 - **Issues**: [GitHub Issues](https://github.com/your-org/mern-app-devops/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-org/mern-app-devops/discussions)
-- **Email**: devops@yourcompany.com
+- **Email**: basharelsamahy7@gmail.com
 
 ## 🙏 Acknowledgments
 
