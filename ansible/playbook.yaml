@@ -1,0 +1,12 @@
+---
+- name: Deploy MERN Webserver
+  hosts: webserver
+  become: yes
+  roles:
+    - webserver
+
+- name: Deploy MongoDB DBserver
+  hosts: dbserver
+  become: yes
+  roles:
+    - dbserver

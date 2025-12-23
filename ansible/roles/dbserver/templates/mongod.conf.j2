@@ -1,0 +1,15 @@
+# mongod.conf - MongoDB configuration template
+
+storage:
+  dbPath: {{ mongo_data_dir }}
+  journal:
+    enabled: true
+
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+net:
+  port: 27017
+  bindIp: 127.0.0.1,{{ ansible_default_ipv4.address }}

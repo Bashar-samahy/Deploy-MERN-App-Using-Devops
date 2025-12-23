@@ -1,0 +1,7 @@
+app_name: "mern-webapp"
+app_dir: "/home/ansibleadmin/app"
+
+docker_image_name: "mern_webserver_image"
+docker_container_name: "mern_webserver_container"
+
+node_version: "14"

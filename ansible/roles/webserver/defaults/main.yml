@@ -1,2 +1,4 @@
 ---
-# defaults file for roles/webserver
+app_dir: "/home/ansibleadmin/app"
+docker_image_name: "mern_webserver_image"
+docker_container_name: "mern_webserver_container"

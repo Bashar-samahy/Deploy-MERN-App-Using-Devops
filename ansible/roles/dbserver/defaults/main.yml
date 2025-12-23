@@ -1,2 +1,3 @@
 ---
-# defaults file for roles/dbserver
+mongo_data_dir: "/home/ansibleadmin/mongo-data"
+mongo_port: 27017

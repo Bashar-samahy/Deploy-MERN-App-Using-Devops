@@ -1,2 +1,43 @@
 ---
-# tasks file for roles/webserver
+- name: Install Docker and Git
+  apt:
+    name:
+      - docker.io
+      - git
+    state: present
+    update_cache: yes
+
+- name: Add ansibleadmin to docker group
+  user:
+    name: ansibleadmin
+    groups: docker
+    append: yes
+
+- name: Create app directory
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: ansibleadmin
+    group: ansibleadmin
+
+- name: Copy MERN app code to server
+  copy:
+    src: files/app/
+    dest: "{{ app_dir }}/"
+    owner: ansibleadmin
+    group: ansibleadmin
+    mode: 0755
+
+- name: Build Docker image
+  docker_image:
+    path: "{{ app_dir }}"
+    name: "{{ docker_image_name }}"
+
+- name: Run Docker container
+  docker_container:
+    name: "{{ docker_container_name }}"
+    image: "{{ docker_image_name }}"
+    state: started
+    restart_policy: always
+    ports:
+      - "80:5000"
