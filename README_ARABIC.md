@@ -1019,7 +1019,7 @@ app.use(express.static('public', {
 ## 📞 الدعم والمساعدة
 
 ### 📧 وسائل التواصل
-- **Email**: devops@company.com
+- **Email**: basharelsamahy7@gmail.com
 - **Slack**: #mern-devops
 - **GitHub Issues**: للمشاكل التقنية
 - **Wiki**: للوثائق التفصيلية
